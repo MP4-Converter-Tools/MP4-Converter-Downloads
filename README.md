@@ -3,7 +3,7 @@
 MP4를 GIF로 변환하고 GIF를 20MB 미만으로 압축하는 Windows 프로그램입니다.
 파일은 PC에서 처리하며 서버에 업로드하지 않습니다.
 
-**현재 정식 파일 공개 전 최종 확인 중입니다.** 공개 후 [Releases](https://github.com/SeokYB47/MP4-GIF-Conversion-Downloads/releases)에서 다운로드할 수 있습니다.
+공개된 배포 파일은 [Releases](https://github.com/SeokYB47/MP4-GIF-Conversion-Downloads/releases)에서 다운로드할 수 있습니다.
 
 ## 주요 기능
 
@@ -28,4 +28,4 @@ MP4를 GIF로 변환하고 GIF를 20MB 미만으로 압축하는 Windows 프로�
 
 FFmpeg 등 대응 소스는 실행 ZIP의 `source-materials/`에 있습니다. GitHub가 자동 생성하는 **Source code ZIP**은 이 배포 안내 저장소의 내용이므로 구분해 주세요.
 
-프로그램 자체의 최종 이용 조건은 정식 릴리스에서 안내합니다. 외부 구성요소에는 각각의 라이선스가 별도로 적용됩니다.
+개인·업무 용도로 무료로 사용할 수 있습니다. **앱 자체 또는 앱을 포함한 패키지의 재배포는 별도 승인**이 필요합니다. 이 조건은 제3자 구성요소가 각 라이선스에 따라 갖는 권리를 제한하지 않습니다. 자세한 내용은 [USAGE_TERMS.md](USAGE_TERMS.md)를 확인하세요.
