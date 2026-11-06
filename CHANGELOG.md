@@ -1,6 +1,7 @@
 # MP4-GIF-Conversion 업데이트 로그
 
 ## v2.0
+- GIF / WebP 변환·압축 완료 시 최종 사양·품질·저장 위치를 보여주는 완료 팝업 추가.
 - 실행파일을 `MP4-Converter.exe`, 배포 ZIP을 `MP4-Converter-v2.0-Windows-x64.zip`으로 정리.
 - MP4 출력 형식에 GIF / WebP 선택 추가. 각 형식의 20MB / Unlimited 변환 지원.
 - WebP 원본의 전체 구간을 20MB 미만으로 압축하는 기능 추가. 기본 품질 100에서 시작해 필요하면 품질·FPS·해상도 순서로 낮춤. Unlimited는 품질 100 유지.
