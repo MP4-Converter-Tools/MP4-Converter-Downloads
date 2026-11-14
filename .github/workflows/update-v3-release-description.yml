@@ -1,0 +1,74 @@
+name: Update v3.0 release description
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/update-v3-release-description.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  update-description:
+    if: github.repository == 'MP4-Converter-Tools/MP4-Converter-Downloads'
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Update the existing v3.0 description
+        shell: python
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          import base64
+          import json
+          import os
+          import urllib.error
+          import urllib.request
+          
+          REPOSITORY = "MP4-Converter-Tools/MP4-Converter-Downloads"
+          TAG = "v3.0"
+          RELEASE_ID = 445248852
+          EXPECTED_ASSETS = {
+              "MP4-Converter.exe": "sha256:72fa5e43f2e2407be0aba23be0402c9a54424a5dadf01e090fa40d588d5a5a0e",
+              "SHA256SUMS": "sha256:52e43ee30e67953afa29a1a1484e5dc2e61bdc5b9d2f98704f38210aa20a848b",
+          }
+          if os.environ.get("GITHUB_REPOSITORY") != REPOSITORY:
+              raise RuntimeError("Unexpected repository")
+          
+          def api(path, method="GET", payload=None):
+              request = urllib.request.Request(
+                  "https://api.github.com/repos/" + REPOSITORY + path,
+                  data=None if payload is None else json.dumps(payload).encode("utf-8"),
+                  method=method,
+                  headers={
+                      "Authorization": "Bearer " + os.environ["GH_TOKEN"],
+                      "Accept": "application/vnd.github+json",
+                      "Content-Type": "application/json",
+                      "X-GitHub-Api-Version": "2022-11-28",
+                  },
+              )
+              try:
+                  with urllib.request.urlopen(request, timeout=30) as response:
+                      return json.load(response)
+              except urllib.error.HTTPError as error:
+                  raise RuntimeError("GitHub API request failed with HTTP " + str(error.code)) from None
+          
+          document = api("/contents/RELEASE-NOTES.md?ref=" + os.environ["GITHUB_SHA"])
+          notes = base64.b64decode(document["content"], validate=False).decode("utf-8")
+          if not notes.startswith("# MP4 Converter v3.0\n"):
+              raise RuntimeError("Release notes version mismatch")
+          release = api("/releases/tags/" + TAG)
+          if release["id"] != RELEASE_ID or release["tag_name"] != TAG or release["draft"]:
+              raise RuntimeError("Expected the existing published v3.0 release")
+          assets = {asset["name"]: asset for asset in release["assets"]}
+          for name, digest in EXPECTED_ASSETS.items():
+              if name not in assets or assets[name]["state"] != "uploaded" or assets[name].get("digest") != digest:
+                  raise RuntimeError("Release asset integrity mismatch: " + name)
+          if release.get("body", "") != notes:
+              release = api("/releases/" + str(RELEASE_ID), method="PATCH", payload={"body": notes})
+          if release.get("body") != notes:
+              raise RuntimeError("Release description did not match the committed notes")
+          print("Updated description: " + release["html_url"])
+          with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as summary:
+              summary.write("Updated only the description of [" + TAG + "](" + release["html_url"] + ").\n")
